@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.2.0 (2026-03-12)
+
+### Features
+
+- **VFDEncoder: passthrough mode** — New `passthrough=True` parameter keeps original
+  input features alongside VFD-encoded features. This improves performance with
+  tree-based models (RandomForest, GradientBoosting, XGBoost) that benefit from
+  both the raw signal and multi-scale VFD decomposition.
+
+### Fixes
+
+- Fixed `gregorian_to_jdn()` usage in example notebooks (was passing 3 args instead of 1)
+- Fixed Haab' and Long Count output format in notebook examples
+- Fixed docs URL in notebook 01
+- Removed compromised polyfill.io CDN from MkDocs config
+
+---
+
 ## v0.1.0 (2026-03-12)
 
 Initial release.

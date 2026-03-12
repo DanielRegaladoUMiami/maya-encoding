@@ -64,6 +64,12 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
         - 'round': Round to nearest integer
         - 'integer_part': Take floor (discard fractional part)
 
+    passthrough : bool, default=False
+        If True, the original input features are prepended to the output,
+        so the result is [original_features | VFD_features]. This is useful
+        for tree-based models (RandomForest, GradientBoosting, XGBoost) that
+        benefit from both the raw signal and the multi-scale VFD decomposition.
+
     scale_factor : int or 'auto', default='auto'
         Multiplier for float-to-int conversion when handle_float='scale'.
         If 'auto', determined from decimal precision observed during fit().
@@ -104,6 +110,7 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
         normalize: bool = True,
         handle_negative: str = "abs_sign",
         handle_float: str = "scale",
+        passthrough: bool = False,
         scale_factor: int | str = "auto",
     ):
         self.n_levels = n_levels
@@ -111,6 +118,7 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
         self.normalize = normalize
         self.handle_negative = handle_negative
         self.handle_float = handle_float
+        self.passthrough = passthrough
         self.scale_factor = scale_factor
 
     def fit(self, X, y=None):
@@ -219,7 +227,12 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
             )
             encoded_parts.append(col_encoded)
 
-        return np.hstack(encoded_parts)
+        vfd_output = np.hstack(encoded_parts)
+
+        if self.passthrough:
+            return np.hstack([X, vfd_output])
+
+        return vfd_output
 
     def inverse_transform(self, X_encoded):
         """Reconstruct original values from VFD encoding (approximate).
@@ -240,6 +253,10 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
         """
         check_is_fitted(self)
         X_encoded = np.asarray(X_encoded, dtype=np.float64)
+
+        # If passthrough, the first n_features_in_ columns are the original features
+        if self.passthrough:
+            return X_encoded[:, :self.n_features_in_]
 
         n_samples = X_encoded.shape[0]
         result = np.zeros((n_samples, self.n_features_in_))
@@ -316,6 +333,10 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
         """
         check_is_fitted(self)
         names = []
+
+        if self.passthrough:
+            names.extend(self.feature_names_in_)
+
         for i in range(self.n_features_in_):
             col_name = self.feature_names_in_[i]
             has_sign = self.handle_negative == "abs_sign" and self.has_negatives_[i]
@@ -390,6 +411,8 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
             params.append(f"handle_negative='{self.handle_negative}'")
         if self.handle_float != "scale":
             params.append(f"handle_float='{self.handle_float}'")
+        if self.passthrough:
+            params.append("passthrough=True")
         if self.scale_factor != "auto":
             params.append(f"scale_factor={self.scale_factor}")
         return f"VFDEncoder({', '.join(params)})"

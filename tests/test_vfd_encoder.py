@@ -188,3 +188,61 @@ class TestVFDEncoderRepr:
         r = repr(enc)
         assert "n_levels=3" in r
         assert "lite" in r
+
+
+class TestVFDPassthrough:
+    def test_passthrough_shape(self):
+        X = np.array([[100, 200], [300, 400]])
+        enc = VFDEncoder(n_levels=2, components="full", normalize=False, passthrough=True)
+        result = enc.fit_transform(X)
+        # 2 original + 2 features * 6 VFD features each = 2 + 12 = 14
+        assert result.shape == (2, 14)
+
+    def test_passthrough_preserves_original(self):
+        X = np.array([[100.0, 200.0], [300.0, 400.0]])
+        enc = VFDEncoder(n_levels=2, components="full", normalize=False, passthrough=True)
+        result = enc.fit_transform(X)
+        # First 2 columns should be original features
+        np.testing.assert_array_equal(result[:, :2], X)
+
+    def test_passthrough_false_default(self):
+        X = np.array([[100], [200]])
+        enc = VFDEncoder(n_levels=2, components="full", normalize=False)
+        result = enc.fit_transform(X)
+        # Without passthrough: only VFD features
+        assert result.shape == (2, 6)
+
+    def test_passthrough_feature_names(self):
+        X = np.array([[100, 200]])
+        enc = VFDEncoder(n_levels=1, components="lite", normalize=False, passthrough=True)
+        enc.fit(X)
+        names = enc.get_feature_names_out()
+        # 2 original names + 2 VFD names
+        assert names[0] == "f0"
+        assert names[1] == "f1"
+        assert names[2] == "f0_L0_digit"
+        assert names[3] == "f1_L0_digit"
+        assert len(names) == 4
+
+    def test_passthrough_inverse_transform(self):
+        X = np.array([[100.0], [200.0], [300.0]])
+        enc = VFDEncoder(n_levels=2, components="full", normalize=False, passthrough=True)
+        encoded = enc.fit_transform(X)
+        reconstructed = enc.inverse_transform(encoded)
+        np.testing.assert_array_almost_equal(reconstructed, X)
+
+    def test_passthrough_pipeline(self):
+        from sklearn.linear_model import LinearRegression
+        from sklearn.pipeline import Pipeline
+
+        np.random.seed(42)
+        X = np.random.randint(0, 100, size=(50, 3)).astype(float)
+        y = X[:, 0] * 2 + X[:, 1] + np.random.normal(0, 1, 50)
+
+        pipe = Pipeline([
+            ("vfd", VFDEncoder(passthrough=True)),
+            ("lr", LinearRegression()),
+        ])
+        pipe.fit(X, y)
+        score = pipe.score(X, y)
+        assert score > 0.5  # Should fit well since target depends on raw features

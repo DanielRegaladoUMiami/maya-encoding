@@ -68,6 +68,18 @@ Feature vector: [7, 1, 2, 17, 3, 2]  →  normalized: [0.37, 0.33, 0.50, 0.89, 1
 
 Three "zoom levels" per number: coarse magnitude (digits), medium grouping (bars), and fine residual (dots).
 
+### Passthrough Mode: Best of Both Worlds
+
+Use `passthrough=True` to keep original features alongside VFD features — ideal for tree-based models:
+
+```python
+# Original features + VFD features combined
+pipe = Pipeline([
+    ('encode', VFDEncoder(passthrough=True)),
+    ('model', GradientBoostingRegressor())
+])
+```
+
 ### MCE: Temporal Feature Encoding
 
 ```python
@@ -136,6 +148,7 @@ print(jdn_to_long_count(jdn))  # (13, 0, 0, 0, 0) → 13.0.0.0.0
 | `normalize` | `True` | Normalize features to [0, 1] |
 | `handle_negative` | `'abs_sign'` | `'abs_sign'`, `'shift'`, `'error'` |
 | `handle_float` | `'scale'` | `'scale'`, `'round'`, `'integer_part'` |
+| `passthrough` | `False` | Keep original features alongside VFD output |
 | `scale_factor` | `'auto'` | Decimal precision auto-detection |
 
 ### MayaCalendarEncoder
@@ -165,7 +178,7 @@ See the [`examples/`](examples/) directory:
 git clone https://github.com/DanielRegaladoUMiami/maya-encoding.git
 cd maya-encoding
 pip install -e ".[dev]"
-pytest          # Run 118 tests
+pytest          # Run 124 tests
 ruff check .    # Lint
 ```
 

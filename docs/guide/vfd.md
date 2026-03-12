@@ -57,6 +57,20 @@ enc = VFDEncoder(n_levels=2, components="bars_dots")
 # Features: x0_L0_bars, x0_L0_dots, x0_L1_bars, x0_L1_dots
 ```
 
+
+
+## Passthrough Mode
+
+When `passthrough=True`, the encoder prepends the original input features to the VFD output.
+This is useful for tree-based models that benefit from both raw features and VFD decomposition:
+
+```python
+enc = VFDEncoder(passthrough=True)
+# Input: 8 features → Output: 8 original + VFD features
+```
+
+Without passthrough, tree-based models lose the direct signal from features like income or
+location coordinates. With passthrough, they get the best of both worlds.
 ## Auto-Detection
 
 When `n_levels="auto"` (default), the encoder automatically determines the number of vigesimal levels needed to represent the maximum value in the training data.
