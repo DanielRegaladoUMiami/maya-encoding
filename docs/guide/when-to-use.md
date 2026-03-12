@@ -155,3 +155,34 @@ preprocessor = ColumnTransformer([
 ```
 
 See the [examples](https://github.com/DanielRegaladoUMiami/maya-encoding/tree/main/examples) for complete working pipelines.
+
+---
+
+## Applied Use Cases
+
+### Fraud Detection
+
+Transaction amounts carry structural information that raw values hide. Legitimate transactions tend to be multiples of 20 (ATM withdrawals), round numbers (wire transfers), or charm-priced (retail). Fraudulent transactions often break these patterns.
+
+VFD decomposes amounts into multi-scale features that capture this structure automatically. In our benchmark on the [Kaggle Credit Card Fraud](https://www.kaggle.com/mlg-ulb/creditcardfraud) dataset, **isolating only the Amount feature**:
+
+| Encoding | F1 | ROC AUC |
+|----------|-----|---------|
+| Raw Amount | 0.076 | 0.441 |
+| VFD Amount (passthrough) | 0.096 | 0.642 |
+
+VFD nearly triples the AUC from a single feature by separating magnitude tiers from residue patterns — without any manual feature engineering.
+
+→ [Full notebook: Fraud Detection with VFD](https://github.com/DanielRegaladoUMiami/maya-encoding/blob/main/examples/05_fraud_detection.ipynb)
+
+### Pricing & Demand Prediction
+
+Retail prices are not random. They cluster at psychological thresholds ($49.99 vs $50.00), use charm pricing (.99, .95), and create non-linear demand responses at round-number boundaries. VFD's level structure naturally captures these thresholds:
+
+- **L0 (ones)**: within-bracket position — captures charm pricing (.99 vs .00)
+- **L1 (twenties)**: which $20-bracket — steps at each price tier boundary
+- **L2 (four-hundreds)**: major price tier
+
+In our demand prediction benchmark, VFD with passthrough improves Ridge regression from R² 0.978 → 0.980, giving linear models access to threshold effects they can't learn from raw prices alone.
+
+→ [Full notebook: Pricing Analysis with VFD](https://github.com/DanielRegaladoUMiami/maya-encoding/blob/main/examples/06_pricing_analysis.ipynb)

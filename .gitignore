@@ -18,3 +18,4 @@ coverage.xml
 venv/
 *.ipynb_checkpoints/
 benchmarks/results/*.json
+examples/data/
