@@ -28,7 +28,7 @@ jobs:
 
       - name: Lint with ruff
         run: |
-          ruff check src/ tests/
+          ruff check src/ tests/ benchmarks/
 
       - name: Run tests
         run: |

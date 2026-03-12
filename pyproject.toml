@@ -59,10 +59,10 @@ docs = [
 all = ["maya-encoding[viz,benchmarks,dev,docs]"]
 
 [project.urls]
-Homepage = "https://github.com/danielregalado/maya-encoding"
-Documentation = "https://danielregalado.github.io/maya-encoding"
-Repository = "https://github.com/danielregalado/maya-encoding"
-Issues = "https://github.com/danielregalado/maya-encoding/issues"
+Homepage = "https://github.com/DanielRegaladoUMiami/maya-encoding"
+Documentation = "https://DanielRegaladoUMiami.github.io/maya-encoding"
+Repository = "https://github.com/DanielRegaladoUMiami/maya-encoding"
+Issues = "https://github.com/DanielRegaladoUMiami/maya-encoding/issues"
 
 [tool.hatch.version]
 path = "src/maya_encoding/_version.py"

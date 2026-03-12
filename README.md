@@ -1,16 +1,21 @@
 # maya-encoding
 
-[![CI](https://github.com/danielregalado/maya-encoding/actions/workflows/ci.yml/badge.svg)](https://github.com/danielregalado/maya-encoding/actions/workflows/ci.yml)
-[![PyPI version](https://badge.fury.io/py/maya-encoding.svg)](https://badge.fury.io/py/maya-encoding)
+[![CI](https://github.com/DanielRegaladoUMiami/maya-encoding/actions/workflows/ci.yml/badge.svg)](https://github.com/DanielRegaladoUMiami/maya-encoding/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/maya-encoding)](https://pypi.org/project/maya-encoding/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Downloads](https://img.shields.io/pypi/dm/maya-encoding)](https://pypi.org/project/maya-encoding/)
 
 **Maya-inspired numerical encodings for machine learning.**
 
-Two sklearn-compatible transformers that use the mathematical structure of the ancient Maya number system and calendar to create richer feature representations:
+Two scikit-learn compatible transformers that use the mathematical structure of the ancient Maya number system and calendar to create richer feature representations.
 
-- **VFDEncoder** (Vigesimal Feature Decomposition) — Decomposes numbers into the Maya base-20 system with bars (÷5) and dots (%5), giving models multi-scale numerical structure for free.
-- **MayaCalendarEncoder** (Maya Calendar Encoding) — Converts dates into features from the Tzolk'in (260-day), Haab' (365-day), and Long Count calendars, providing interlocking cyclical patterns at multiple time scales.
+## Overview
+
+| Encoder | Input | What it does | Use case |
+|---------|-------|-------------|----------|
+| **VFDEncoder** | Numeric features | Decomposes into base-20 digits, bars (÷5), dots (%5) | Multi-scale numeric patterns |
+| **MayaCalendarEncoder** | Dates | Extracts Tzolk'in (260d), Haab' (365d), Long Count cycles | Temporal feature engineering |
 
 ## Installation
 
@@ -18,9 +23,12 @@ Two sklearn-compatible transformers that use the mathematical structure of the a
 pip install maya-encoding
 ```
 
-With visualization support:
+With optional dependencies:
+
 ```bash
-pip install maya-encoding[viz]
+pip install maya-encoding[viz]         # matplotlib visualization
+pip install maya-encoding[benchmarks]  # xgboost, seaborn for benchmarks
+pip install maya-encoding[dev]         # development tools (ruff, pytest)
 ```
 
 ## Quick Start
@@ -28,6 +36,7 @@ pip install maya-encoding[viz]
 ### VFD: Numeric Feature Encoding
 
 ```python
+import numpy as np
 from maya_encoding import VFDEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
@@ -43,46 +52,75 @@ pipe = Pipeline([
 pipe.fit(X_train, y_train)
 ```
 
-How it works: the number **347** becomes:
+How it works — the number **347** becomes:
+
 ```
 347 = 17×20 + 7
 
-Level 0 (ones):   digit=7,  bars=1, dots=2
+Level 0 (ones):     digit=7,  bars=1, dots=2
 Level 1 (twenties): digit=17, bars=3, dots=2
 
-Feature vector: [7, 1, 2, 17, 3, 2] (or normalized to [0,1])
+Feature vector: [7, 1, 2, 17, 3, 2]  →  normalized: [0.37, 0.33, 0.50, 0.89, 1.00, 0.50]
 ```
 
-This gives the model three "zoom levels" per number — coarse magnitude (digits), medium grouping (bars), and fine residual (dots).
+Three "zoom levels" per number: coarse magnitude (digits), medium grouping (bars), and fine residual (dots).
 
 ### MCE: Temporal Feature Encoding
 
 ```python
+import numpy as np
 from maya_encoding import MayaCalendarEncoder
 
 # Encode dates using Maya calendar cycles
 encoder = MayaCalendarEncoder(
     components=['tzolkin', 'haab', 'long_count'],
-    cyclical=True,  # Add sine/cosine for smooth cycle boundaries
+    cyclical=True,  # sine/cosine for smooth cycle boundaries
 )
 
-X_temporal = encoder.fit_transform(df['date'])
+dates = np.array(["2024-01-01", "2024-06-15", "2024-12-21"])
+features = encoder.fit_transform(dates)
 ```
 
-The Maya calendar provides interlocking cycles of coprime periods (13, 20, 260, 365, 360), capturing multi-scale temporal patterns that standard sine/cosine encoding requires manual period selection to achieve.
+The Maya calendar provides interlocking cycles of coprime periods (13, 20, 260, 365, 360), capturing multi-scale temporal patterns that standard encoding requires manual period selection to achieve.
+
+### Explore Maya Numbers
+
+```python
+from maya_encoding import maya_decompose, to_vigesimal, to_bars_dots
+
+# Convert to vigesimal
+digits = to_vigesimal(347)  # [7, 17] (LSB first)
+
+# Full decomposition
+info = maya_decompose(347)
+# {'digits': [7, 17], 'bars': [1, 3], 'dots': [2, 2], 'n_levels': 2}
+
+# Visualize
+from maya_encoding.visualization.glyphs import render_maya_text
+print(render_maya_text(347))
+```
+
+### Explore Maya Calendar
+
+```python
+from maya_encoding.core.calendar import (
+    gregorian_to_jdn, jdn_to_tzolkin, jdn_to_haab, jdn_to_long_count
+)
+
+# December 21, 2012 — end of the 13th b'ak'tun
+jdn = gregorian_to_jdn(2012, 12, 21)
+print(jdn_to_tzolkin(jdn))     # (4, "Ajaw")
+print(jdn_to_haab(jdn))        # (3, 3, "K'ank'in")
+print(jdn_to_long_count(jdn))  # [0, 0, 0, 0, 13] → 13.0.0.0.0
+```
 
 ## Why Maya Encoding?
 
-**The problem:** When you feed a number like "347" to a model, it knows nothing about its structure. It has to learn from scratch that 347 is close to 350, "large" compared to 5, and divisible in certain ways.
+**The problem:** A number like "347" tells a model nothing about its structure. It must learn from scratch that 347 has certain divisibility properties, is "close" to 350, etc.
 
-**The solution:** The Maya vigesimal system naturally decomposes numbers into a hierarchy:
-- **Vigesimal digits** (×20): coarse magnitude
-- **Bars** (×5): medium grouping
-- **Dots** (×1): fine residual
+**The VFD solution:** The vigesimal system decomposes numbers into a natural hierarchy — digits (×20), bars (×5), dots (×1). This is a *strict information superset*: the model can ignore the extra features via regularization if they're not useful, but gets multi-scale structure for free if they are.
 
-This is a strict information superset — the model can ignore the extra features via regularization if they're not useful, but gets multi-scale structure for free if they are.
-
-For temporal data, the Maya calendar's three interlocking cycles (Tzolk'in 260-day, Haab' 365-day, Long Count) provide coprime-period features that capture patterns standard time encodings miss.
+**The MCE solution:** Standard temporal encodings use Gregorian-aligned cycles (day-of-week, month, etc.). The Maya calendar provides *orthogonal* cycles with coprime periods (13, 20, 260, 365) that capture patterns Gregorian features miss.
 
 ## API Reference
 
@@ -92,46 +130,46 @@ For temporal data, the Maya calendar's three interlocking cycles (Tzolk'in 260-d
 |-----------|---------|-------------|
 | `n_levels` | `'auto'` | Vigesimal levels (auto-detected from data) |
 | `components` | `'full'` | `'full'`, `'lite'` (digits only), `'bars_dots'` |
-| `normalize` | `True` | Normalize to [0,1] |
+| `normalize` | `True` | Normalize features to [0, 1] |
 | `handle_negative` | `'abs_sign'` | `'abs_sign'`, `'shift'`, `'error'` |
 | `handle_float` | `'scale'` | `'scale'`, `'round'`, `'integer_part'` |
-| `scale_factor` | `'auto'` | Auto-detected from decimal precision |
+| `scale_factor` | `'auto'` | Decimal precision auto-detection |
 
 ### MayaCalendarEncoder
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `components` | `['tzolkin', 'haab', 'long_count']` | Calendar systems to use |
-| `tzolkin_encoding` | `'separate'` | `'separate'` (2 features) or `'combined'` (1 feature) |
-| `haab_encoding` | `'hierarchical'` | `'hierarchical'` (with bars/dots) or `'flat'` |
-| `long_count_levels` | `3` | 1-5: kin, uinal, tun, katun, baktun |
-| `cyclical` | `True` | Add sine/cosine pairs |
+| `tzolkin_encoding` | `'separate'` | `'separate'` (number + name) or `'combined'` (position 0-259) |
+| `haab_encoding` | `'hierarchical'` | `'hierarchical'` (with bars/dots) or `'flat'` (day 0-364) |
+| `long_count_levels` | `3` | 1–5: k'in, uinal, tun, k'atun, b'ak'tun |
+| `cyclical` | `True` | Add sine/cosine pairs for smooth cycle boundaries |
 | `epoch` | `'gmt'` | `'gmt'` (standard), `'spinden'`, or custom JDN |
-| `wayeb_flag` | `True` | Binary feature for the 5-day Wayeb' period |
+| `wayeb_flag` | `True` | Binary flag for the 5-day Wayeb' period |
 
-## Visualization
+## Examples
 
-```python
-from maya_encoding.visualization.glyphs import plot_maya_number, render_maya_text
+See the [`examples/`](examples/) directory:
 
-# Text rendering
-print(render_maya_text(347))
-
-# Matplotlib rendering
-plot_maya_number(347)
-```
+- [`01_quickstart.ipynb`](examples/01_quickstart.ipynb) — Basic VFD and MCE usage
+- [`02_vfd_deep_dive.ipynb`](examples/02_vfd_deep_dive.ipynb) — Components, visualization, performance
+- [`03_mce_temporal.ipynb`](examples/03_mce_temporal.ipynb) — Calendar systems and time series
+- [`04_benchmark_results.ipynb`](examples/04_benchmark_results.ipynb) — Performance comparisons
 
 ## Development
 
 ```bash
-git clone https://github.com/danielregalado/maya-encoding.git
+git clone https://github.com/DanielRegaladoUMiami/maya-encoding.git
 cd maya-encoding
 pip install -e ".[dev]"
-pytest
+pytest          # Run 118 tests
+ruff check .    # Lint
 ```
 
 Run benchmarks:
+
 ```bash
+pip install -e ".[benchmarks]"
 python benchmarks/run_vfd_benchmarks.py
 python benchmarks/run_mce_benchmarks.py
 ```
@@ -145,7 +183,7 @@ If you use maya-encoding in your research, please cite:
   author = {Regalado, Daniel},
   title = {maya-encoding: Maya-Inspired Numerical Encodings for Machine Learning},
   year = {2026},
-  url = {https://github.com/danielregalado/maya-encoding}
+  url = {https://github.com/DanielRegaladoUMiami/maya-encoding}
 }
 ```
 

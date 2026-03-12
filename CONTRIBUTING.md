@@ -5,7 +5,7 @@ Thank you for your interest in contributing!
 ## Development Setup
 
 ```bash
-git clone https://github.com/danielregalado/maya-encoding.git
+git clone https://github.com/DanielRegaladoUMiami/maya-encoding.git
 cd maya-encoding
 pip install -e ".[dev]"
 ```
