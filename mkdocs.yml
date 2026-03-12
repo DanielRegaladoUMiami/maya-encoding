@@ -1,0 +1,70 @@
+site_name: Maya Encoding
+site_description: Maya-inspired numerical encodings for machine learning
+site_url: https://danielregalado.github.io/maya-encoding
+repo_url: https://github.com/DanielRegaladoUMiami/maya-encoding
+repo_name: DanielRegaladoUMiami/maya-encoding
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep orange
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep orange
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_heading: true
+            heading_level: 2
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - User Guide:
+      - VFD Encoder: guide/vfd.md
+      - Calendar Encoder: guide/mce.md
+      - Visualization: guide/visualization.md
+  - Mathematical Background: math-background.md
+  - API Reference:
+      - VFDEncoder: api/vfd.md
+      - MayaCalendarEncoder: api/mce.md
+      - Core Functions: api/core.md
+  - Contributing: contributing.md
+  - Changelog: changelog.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.arithmatex:
+      generic: true
+  - tables
+  - toc:
+      permalink: true
+
+extra_javascript:
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
