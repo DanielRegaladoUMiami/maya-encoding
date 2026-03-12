@@ -108,10 +108,10 @@ from maya_encoding.core.calendar import (
 )
 
 # December 21, 2012 — end of the 13th b'ak'tun
-jdn = gregorian_to_jdn(2012, 12, 21)
-print(jdn_to_tzolkin(jdn))     # (4, "Ajaw")
-print(jdn_to_haab(jdn))        # (3, 3, "K'ank'in")
-print(jdn_to_long_count(jdn))  # [0, 0, 0, 0, 13] → 13.0.0.0.0
+jdn = gregorian_to_jdn("2012-12-21")
+print(jdn_to_tzolkin(jdn))     # (4, 19) → 4 Ajaw
+print(jdn_to_haab(jdn))        # (13, 3) → month 13, day 3
+print(jdn_to_long_count(jdn))  # (13, 0, 0, 0, 0) → 13.0.0.0.0
 ```
 
 ## Why Maya Encoding?

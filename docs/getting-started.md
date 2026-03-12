@@ -93,7 +93,7 @@ enc = VFDEncoder(handle_negative="abs_sign")
 # shift: shift all values to be non-negative
 enc = VFDEncoder(handle_negative="shift")
 
-# error: raise ValueError if negatives found (default)
+# error: raise ValueError if negatives found
 enc = VFDEncoder(handle_negative="error")
 ```
 
