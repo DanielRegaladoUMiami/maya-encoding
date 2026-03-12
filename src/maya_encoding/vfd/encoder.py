@@ -1,5 +1,4 @@
-"""
-VFDEncoder: Vigesimal Feature Decomposition transformer for scikit-learn.
+"""VFDEncoder: Vigesimal Feature Decomposition transformer for scikit-learn.
 
 Converts numeric features into multi-scale Maya vigesimal representations,
 providing models with hierarchical structure (digits, bars, dots) at no
@@ -15,7 +14,6 @@ from sklearn.utils.validation import check_is_fitted
 from maya_encoding.core.utils import (
     get_feature_names,
     handle_floats,
-    handle_negatives,
     validate_input,
 )
 from maya_encoding.core.vigesimal import auto_n_levels, maya_encode_array
@@ -96,6 +94,7 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
            [ 0.,  0.,  0.,  1.,  0.,  1.],
            [ 0.,  0.,  0.,  0.,  0.,  0.],
            [19.,  3.,  4., 19.,  3.,  4.]])
+
     """
 
     def __init__(
@@ -124,10 +123,12 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
         X : array-like of shape (n_samples, n_features)
             Training data.
         y : ignored
+            Not used; present for sklearn compatibility.
 
         Returns
         -------
         self
+
         """
         X = validate_input(X)
         self.n_features_in_ = X.shape[1]
@@ -185,6 +186,7 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
         -------
         np.ndarray
             Transformed array of shape (n_samples, n_output_features).
+
         """
         check_is_fitted(self)
         X = validate_input(X)
@@ -234,6 +236,7 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
         -------
         np.ndarray
             Reconstructed values of shape (n_samples, n_features_in).
+
         """
         check_is_fitted(self)
         X_encoded = np.asarray(X_encoded, dtype=np.float64)
@@ -253,7 +256,8 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
                 signs = X_encoded[:, col_idx]
                 sign_offset = 1
 
-            col_data = X_encoded[:, col_idx + sign_offset : col_idx + sign_offset + features_per_col]
+            end_idx = col_idx + sign_offset + features_per_col
+            col_data = X_encoded[:, col_idx + sign_offset : end_idx]
 
             # Reconstruct from digits
             if self.components == "full":
@@ -302,11 +306,13 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         input_features : ignored
+            Not used; present for sklearn compatibility.
 
         Returns
         -------
         list[str]
             Output feature names.
+
         """
         check_is_fitted(self)
         names = []
@@ -327,7 +333,7 @@ class VFDEncoder(BaseEstimator, TransformerMixin):
     def _get_input_names(self, X) -> list[str]:
         """Extract or generate input feature names."""
         try:
-            import pandas as pd
+            import pandas  # noqa: F401
 
             if hasattr(X, "columns"):
                 return list(X.columns)

@@ -1,5 +1,4 @@
-"""
-MCE Benchmark: Compare Maya Calendar Encoding against standard temporal encodings.
+"""MCE Benchmark: Compare Maya Calendar Encoding against standard temporal encodings.
 
 Uses synthetic time series data with known cyclical patterns to test whether
 MCE can capture temporal structure better than standard sine/cosine encoding.
@@ -17,7 +16,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.neural_network import MLPRegressor
-from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 
 warnings.filterwarnings("ignore")
@@ -29,7 +27,7 @@ try:
 except ImportError:
     HAS_XGBOOST = False
 
-from maya_encoding import MayaCalendarEncoder
+from maya_encoding import MayaCalendarEncoder  # noqa: E402
 
 RESULTS_DIR = Path(__file__).parent / "results"
 RESULTS_DIR.mkdir(exist_ok=True)
@@ -242,9 +240,9 @@ def run_synthetic_benchmark():
                 results[enc_name][model_name] = result
 
                 print(
-                    f"  {model_name:20s} | RMSE: {result['rmse_mean']:.4f} ± {result['rmse_std']:.4f} | "
-                    f"MAE: {result['mae_mean']:.4f} ± {result['mae_std']:.4f} | "
-                    f"Time: {elapsed:.1f}s"
+                    f"  {model_name:20s} | RMSE: {result['rmse_mean']:.4f} "
+                    f"± {result['rmse_std']:.4f} | MAE: {result['mae_mean']:.4f} "
+                    f"± {result['mae_std']:.4f} | Time: {elapsed:.1f}s"
                 )
 
             except Exception as e:

@@ -1,5 +1,4 @@
-"""
-Utility functions for input validation and preprocessing.
+"""Utility functions for input validation and preprocessing.
 
 Handles conversion of negative numbers, floating-point values, and input validation
 for the Maya encoding pipeline.
@@ -29,6 +28,7 @@ def validate_input(X) -> np.ndarray:
     ------
     ValueError
         If input contains NaN or infinity values.
+
     """
     # Handle pandas objects
     try:
@@ -83,6 +83,7 @@ def handle_negatives(
     ------
     ValueError
         If strategy='error' and negative values are found.
+
     """
     has_negatives = np.any(values < 0)
 
@@ -101,7 +102,10 @@ def handle_negatives(
         signs = (values < 0).astype(np.float64)
         return np.abs(values), signs
     else:
-        raise ValueError(f"Unknown negative strategy: '{strategy}'. Use 'abs_sign', 'shift', 'error'.")
+        raise ValueError(
+            f"Unknown negative strategy: '{strategy}'. "
+            f"Use 'abs_sign', 'shift', 'error'."
+        )
 
 
 def handle_floats(
@@ -126,6 +130,7 @@ def handle_floats(
     -------
     tuple[np.ndarray, int]
         (integer_values, scale_factor_used)
+
     """
     if strategy == "round":
         return np.round(values).astype(np.int64), 1
@@ -167,6 +172,7 @@ def auto_scale_factor(values: np.ndarray) -> int:
     1
     >>> auto_scale_factor(np.array([1.123, 2.456]))
     1000
+
     """
     # Check if all values are effectively integers
     if np.allclose(values, np.round(values)):
@@ -210,6 +216,7 @@ def get_feature_names(
     -------
     list[str]
         List of feature names.
+
     """
     names = []
 

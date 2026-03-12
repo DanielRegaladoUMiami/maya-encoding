@@ -1,5 +1,4 @@
-"""
-Core vigesimal (base-20) number system functions.
+"""Core vigesimal (base-20) number system functions.
 
 The Maya vigesimal system decomposes numbers into positions of value 1, 20, 400, 8000, ...
 Each position (digit 0-19) further decomposes into bars (value 5, max 3) and dots (value 1, max 4).
@@ -37,6 +36,7 @@ def auto_n_levels(max_value: int | float) -> int:
     2
     >>> auto_n_levels(400)
     3
+
     """
     if max_value <= 0:
         return 1
@@ -80,6 +80,7 @@ def to_vigesimal(n: int, n_levels: int | None = None) -> list[int]:
     [7, 17]
     >>> to_vigesimal(347, n_levels=4)
     [7, 17, 0, 0]
+
     """
     if n < 0:
         raise ValueError(f"n must be non-negative, got {n}. Use utils.handle_negatives first.")
@@ -122,6 +123,7 @@ def from_vigesimal(digits: list[int]) -> int:
     20
     >>> from_vigesimal([0])
     0
+
     """
     result = 0
     for i, d in enumerate(digits):
@@ -162,6 +164,7 @@ def to_bars_dots(digit: int) -> tuple[int, int]:
     (1, 2)
     >>> to_bars_dots(19)
     (3, 4)
+
     """
     if not 0 <= digit <= 19:
         raise ValueError(f"Vigesimal digit must be in [0, 19], got {digit}.")
@@ -195,6 +198,7 @@ def maya_decompose(n: int, n_levels: int | None = None) -> dict:
     {'digits': [7, 17], 'bars': [1, 3], 'dots': [2, 2], 'n_levels': 2}
     >>> maya_decompose(0)
     {'digits': [0], 'bars': [0], 'dots': [0], 'n_levels': 1}
+
     """
     digits = to_vigesimal(n, n_levels)
     bars = []
@@ -239,6 +243,7 @@ def maya_encode_array(
     np.ndarray
         2D array of shape (len(values), n_features).
         n_features = n_levels * features_per_level.
+
     """
     values = np.asarray(values, dtype=np.int64).ravel()
     n = len(values)

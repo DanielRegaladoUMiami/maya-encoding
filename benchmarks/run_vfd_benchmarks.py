@@ -1,5 +1,4 @@
-"""
-VFD Benchmark: Compare Vigesimal Feature Decomposition against baseline encodings.
+"""VFD Benchmark: Compare Vigesimal Feature Decomposition against baseline encodings.
 
 Experiments:
 - V1: California Housing (regression)
@@ -22,9 +21,8 @@ from sklearn.metrics import (
     f1_score,
     mean_absolute_error,
     mean_squared_error,
-    roc_auc_score,
 )
-from sklearn.model_selection import StratifiedKFold, cross_val_predict
+from sklearn.model_selection import StratifiedKFold
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer, MinMaxScaler
@@ -39,7 +37,7 @@ try:
 except ImportError:
     HAS_XGBOOST = False
 
-from maya_encoding import VFDEncoder
+from maya_encoding import VFDEncoder  # noqa: E402
 
 RESULTS_DIR = Path(__file__).parent / "results"
 RESULTS_DIR.mkdir(exist_ok=True)
@@ -159,9 +157,9 @@ def run_california_housing():
                 results[enc_name][model_name] = result
 
                 print(
-                    f"  {model_name:20s} | RMSE: {result['rmse_mean']:.4f} ± {result['rmse_std']:.4f} | "
-                    f"MAE: {result['mae_mean']:.4f} ± {result['mae_std']:.4f} | "
-                    f"Time: {elapsed:.1f}s"
+                    f"  {model_name:20s} | RMSE: {result['rmse_mean']:.4f} "
+                    f"± {result['rmse_std']:.4f} | MAE: {result['mae_mean']:.4f} "
+                    f"± {result['mae_std']:.4f} | Time: {elapsed:.1f}s"
                 )
 
             except Exception as e:

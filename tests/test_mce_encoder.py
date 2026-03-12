@@ -100,8 +100,16 @@ class TestMCEFeatureNames:
 class TestMCECyclical:
     def test_cyclical_adds_sincos(self):
         dates = np.array(["2024-01-01"])
-        enc_no = MayaCalendarEncoder(components=["tzolkin"], cyclical=False, tzolkin_encoding="separate")
-        enc_yes = MayaCalendarEncoder(components=["tzolkin"], cyclical=True, tzolkin_encoding="separate")
+        enc_no = MayaCalendarEncoder(
+            components=["tzolkin"],
+            cyclical=False,
+            tzolkin_encoding="separate",
+        )
+        enc_yes = MayaCalendarEncoder(
+            components=["tzolkin"],
+            cyclical=True,
+            tzolkin_encoding="separate",
+        )
 
         r_no = enc_no.fit_transform(dates)
         r_yes = enc_yes.fit_transform(dates)

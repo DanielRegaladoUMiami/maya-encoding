@@ -1,7 +1,6 @@
 """Tests for scikit-learn compatibility."""
 
 import numpy as np
-import pytest
 
 from maya_encoding.vfd.encoder import VFDEncoder
 

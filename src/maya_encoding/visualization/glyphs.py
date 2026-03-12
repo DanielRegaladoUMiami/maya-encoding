@@ -1,5 +1,4 @@
-"""
-Visualization of Maya numerals using matplotlib.
+"""Visualization of Maya numerals using matplotlib.
 
 Renders numbers as Maya glyphs with dots (●), bars (━), and shells (◎ for zero).
 """
@@ -37,6 +36,7 @@ def render_maya_text(n: int, n_levels: int | None = None) -> str:
     ───
     ●●
     ━
+
     """
     if n < 0:
         raise ValueError(f"Cannot render negative number: {n}")
@@ -81,10 +81,11 @@ def plot_maya_number(n: int, n_levels: int | None = None, ax=None, **kwargs):
     -------
     matplotlib.axes.Axes
         The axes with the rendered glyph.
+
     """
     try:
-        import matplotlib.pyplot as plt
         import matplotlib.patches as patches
+        import matplotlib.pyplot as plt
     except ImportError:
         raise ImportError(
             "matplotlib is required for visualization. "
@@ -174,6 +175,7 @@ def plot_maya_grid(numbers: list[int], cols: int = 5, n_levels: int | None = Non
     -------
     matplotlib.figure.Figure
         The figure with all rendered glyphs.
+
     """
     try:
         import matplotlib.pyplot as plt

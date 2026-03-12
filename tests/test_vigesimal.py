@@ -76,7 +76,7 @@ class TestFromVigesimal:
 
     @pytest.mark.parametrize("n", [0, 1, 19, 20, 100, 347, 399, 400, 7999, 8000, 160000])
     def test_roundtrip(self, n):
-        """encode -> decode should be identity for all valid inputs."""
+        """Encode -> decode should be identity for all valid inputs."""
         levels = auto_n_levels(n)
         digits = to_vigesimal(n, levels)
         assert from_vigesimal(digits) == n

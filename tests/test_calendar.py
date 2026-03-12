@@ -3,7 +3,6 @@
 import datetime
 
 import numpy as np
-import pytest
 
 from maya_encoding.core.calendar import (
     GMT_EPOCH_JDN,

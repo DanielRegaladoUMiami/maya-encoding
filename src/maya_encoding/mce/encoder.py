@@ -1,5 +1,4 @@
-"""
-MayaCalendarEncoder: Maya Calendar Encoding transformer for scikit-learn.
+"""MayaCalendarEncoder: Maya Calendar Encoding transformer for scikit-learn.
 
 Converts date/datetime features into cyclical features based on the three
 Maya calendar systems (Tzolk'in, Haab', Long Count), providing models with
@@ -95,6 +94,7 @@ class MayaCalendarEncoder(BaseEstimator, TransformerMixin):
     >>> dates = pd.Series(['2012-12-21', '2024-01-01', '2024-06-15'])
     >>> enc = MayaCalendarEncoder(components=['tzolkin', 'haab'])
     >>> enc.fit_transform(dates)  # doctest: +SKIP
+
     """
 
     def __init__(
@@ -108,7 +108,10 @@ class MayaCalendarEncoder(BaseEstimator, TransformerMixin):
         wayeb_flag: bool = True,
         normalize: bool = True,
     ):
-        self.components = components if components is not None else ["tzolkin", "haab", "long_count"]
+        default_components = ["tzolkin", "haab", "long_count"]
+        self.components = (
+            components if components is not None else default_components
+        )
         self.tzolkin_encoding = tzolkin_encoding
         self.haab_encoding = haab_encoding
         self.long_count_levels = long_count_levels
@@ -125,10 +128,12 @@ class MayaCalendarEncoder(BaseEstimator, TransformerMixin):
         X : array-like
             Date column (strings, datetime, datetime64, or timestamps).
         y : ignored
+            Not used; present for sklearn compatibility.
 
         Returns
         -------
         self
+
         """
         # Resolve epoch
         if self.epoch == "gmt":
@@ -168,12 +173,12 @@ class MayaCalendarEncoder(BaseEstimator, TransformerMixin):
         -------
         np.ndarray
             2D array of shape (n_dates, n_output_features).
+
         """
         check_is_fitted(self)
 
         dates = self._to_array(X)
         jdn = dates_to_jdn_array(dates)
-        n = len(jdn)
 
         feature_arrays = []
 
@@ -310,6 +315,7 @@ class MayaCalendarEncoder(BaseEstimator, TransformerMixin):
         -------
         list[str]
             Descriptive feature names.
+
         """
         check_is_fitted(self)
         names = []
@@ -362,7 +368,8 @@ class MayaCalendarEncoder(BaseEstimator, TransformerMixin):
             if isinstance(X, pd.DataFrame):
                 if X.shape[1] != 1:
                     raise ValueError(
-                        f"MayaCalendarEncoder expects a single date column, got {X.shape[1]} columns."
+                        f"MayaCalendarEncoder expects a single date column, "
+                        f"got {X.shape[1]} columns."
                     )
                 return X.iloc[:, 0]
             if isinstance(X, pd.Series):

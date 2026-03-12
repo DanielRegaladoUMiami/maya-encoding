@@ -1,5 +1,4 @@
-"""
-Maya calendar conversion functions.
+"""Maya calendar conversion functions.
 
 Implements conversions from Gregorian dates to the three Maya calendar systems:
 - Tzolk'in (260-day sacred calendar): 13 numbers x 20 day names
@@ -71,6 +70,7 @@ def _parse_date(date: DateLike) -> datetime.date:
     Returns
     -------
     datetime.date
+
     """
     if isinstance(date, datetime.datetime):
         return date.date()
@@ -109,6 +109,7 @@ def gregorian_to_jdn(date: DateLike) -> int:
     --------
     >>> gregorian_to_jdn('2012-12-21')
     2456283
+
     """
     d = _parse_date(date)
     y = d.year
@@ -120,7 +121,15 @@ def gregorian_to_jdn(date: DateLike) -> int:
     y_adj = y + 4800 - a
     m_adj = m + 12 * a - 3
 
-    jdn = day + (153 * m_adj + 2) // 5 + 365 * y_adj + y_adj // 4 - y_adj // 100 + y_adj // 400 - 32045
+    jdn = (
+        day
+        + (153 * m_adj + 2) // 5
+        + 365 * y_adj
+        + y_adj // 4
+        - y_adj // 100
+        + y_adj // 400
+        - 32045
+    )
     return jdn
 
 
@@ -135,6 +144,7 @@ def jdn_to_gregorian(jdn: int) -> datetime.date:
     Returns
     -------
     datetime.date
+
     """
     # Standard inverse JDN algorithm
     a = jdn + 32044
@@ -178,6 +188,7 @@ def jdn_to_tzolkin(jdn: int, epoch_jdn: int = GMT_EPOCH_JDN) -> tuple[int, int]:
     --------
     >>> jdn_to_tzolkin(2456283)  # 2012-12-21 = 4 Ajaw
     (4, 19)
+
     """
     # Days since epoch
     day_count = jdn - epoch_jdn
@@ -212,6 +223,7 @@ def tzolkin_to_day_in_cycle(number: int, day_name: int) -> int:
     -------
     int
         Day position in the 260-day cycle (0-259).
+
     """
     # CRT: find x such that x ≡ (number-1) mod 13 and x ≡ day_name mod 20
     # Solution: x = (40*(number-1) + 221*day_name) mod 260
@@ -244,6 +256,7 @@ def jdn_to_haab(jdn: int, epoch_jdn: int = GMT_EPOCH_JDN) -> tuple[int, int]:
     --------
     >>> jdn_to_haab(2456283)  # 2012-12-21 = 3 K'ank'in
     (13, 3)
+
     """
     day_count = jdn - epoch_jdn
 
@@ -284,6 +297,7 @@ def is_wayeb(jdn: int, epoch_jdn: int = GMT_EPOCH_JDN) -> bool:
     -------
     bool
         True if the date is in Wayeb'.
+
     """
     month, _ = jdn_to_haab(jdn, epoch_jdn)
     return month == 18
@@ -322,6 +336,7 @@ def jdn_to_long_count(
     --------
     >>> jdn_to_long_count(2456283)  # 2012-12-21 = 13.0.0.0.0
     (13, 0, 0, 0, 0)
+
     """
     day_count = jdn - epoch_jdn
 
@@ -363,6 +378,7 @@ def long_count_to_kin(long_count: tuple[int, ...]) -> int:
     -------
     int
         Total kin (days) since Maya epoch.
+
     """
     # Reverse to get LSB first: kin, uinal, tun, katun, baktun
     digits = list(reversed(long_count))
@@ -387,6 +403,7 @@ def dates_to_jdn_array(dates) -> np.ndarray:
     -------
     np.ndarray
         1D array of JDN integers.
+
     """
     # Handle numpy datetime64 arrays efficiently
     if isinstance(dates, np.ndarray) and np.issubdtype(dates.dtype, np.datetime64):
@@ -415,13 +432,16 @@ def dates_to_jdn_array(dates) -> np.ndarray:
     return result
 
 
-def jdn_array_to_tzolkin(jdn_array: np.ndarray, epoch_jdn: int = GMT_EPOCH_JDN) -> tuple[np.ndarray, np.ndarray]:
+def jdn_array_to_tzolkin(
+    jdn_array: np.ndarray, epoch_jdn: int = GMT_EPOCH_JDN
+) -> tuple[np.ndarray, np.ndarray]:
     """Vectorized Tzolk'in conversion.
 
     Returns
     -------
     tuple[np.ndarray, np.ndarray]
         (numbers_array, day_names_array)
+
     """
     day_count = jdn_array - epoch_jdn
     numbers = ((day_count + 4 - 1) % 13) + 1  # epoch number = 4
@@ -429,13 +449,16 @@ def jdn_array_to_tzolkin(jdn_array: np.ndarray, epoch_jdn: int = GMT_EPOCH_JDN) 
     return numbers.astype(np.int64), day_names.astype(np.int64)
 
 
-def jdn_array_to_haab(jdn_array: np.ndarray, epoch_jdn: int = GMT_EPOCH_JDN) -> tuple[np.ndarray, np.ndarray]:
+def jdn_array_to_haab(
+    jdn_array: np.ndarray, epoch_jdn: int = GMT_EPOCH_JDN
+) -> tuple[np.ndarray, np.ndarray]:
     """Vectorized Haab' conversion.
 
     Returns
     -------
     tuple[np.ndarray, np.ndarray]
         (months_array, days_array)
+
     """
     day_count = jdn_array - epoch_jdn
     epoch_haab_day = 17 * 20 + 8  # 8 Kumk'u = day 348 in Haab'
@@ -468,6 +491,7 @@ def jdn_array_to_long_count(
     -------
     np.ndarray
         2D array of shape (n_dates, n_levels), LSB first: [kin, uinal, tun, ...].
+
     """
     day_count = jdn_array - epoch_jdn
     n = len(jdn_array)

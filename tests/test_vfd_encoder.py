@@ -104,8 +104,13 @@ class TestVFDEncoderNegatives:
 class TestVFDEncoderFloats:
     def test_scale_auto(self):
         X = np.array([[1.5], [2.75]])
-        enc = VFDEncoder(n_levels="auto", components="lite", normalize=False, handle_float="scale")
-        result = enc.fit_transform(X)
+        enc = VFDEncoder(
+            n_levels="auto",
+            components="lite",
+            normalize=False,
+            handle_float="scale",
+        )
+        enc.fit_transform(X)
         assert enc.scale_factor_ >= 100  # Should detect 2 decimal places
 
     def test_round(self):
@@ -116,7 +121,12 @@ class TestVFDEncoderFloats:
 
     def test_integer_part(self):
         X = np.array([[1.9], [2.1]])
-        enc = VFDEncoder(n_levels=1, components="lite", normalize=False, handle_float="integer_part")
+        enc = VFDEncoder(
+            n_levels=1,
+            components="lite",
+            normalize=False,
+            handle_float="integer_part",
+        )
         result = enc.fit_transform(X)
         np.testing.assert_array_equal(result.ravel(), [1, 2])
 

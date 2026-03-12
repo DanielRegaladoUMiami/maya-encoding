@@ -1,5 +1,4 @@
-"""
-maya-encoding: Maya-inspired numerical encodings for machine learning.
+"""maya-encoding: Maya-inspired numerical encodings for machine learning.
 
 Two encoding systems:
 - VFDEncoder: Vigesimal Feature Decomposition for tabular numeric features
