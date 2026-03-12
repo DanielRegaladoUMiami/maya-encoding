@@ -114,6 +114,7 @@ enc = VFDEncoder(handle_float="integer_part")
 
 ## Next Steps
 
+- [When to Use Maya Encoding](guide/when-to-use.md) — choosing the right encoder for your data
 - [VFD Guide](guide/vfd.md) for in-depth VFD documentation
 - [MCE Guide](guide/mce.md) for calendar encoding details
 - [API Reference](api/vfd.md) for complete API docs

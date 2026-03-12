@@ -41,6 +41,7 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - User Guide:
+      - When to Use: guide/when-to-use.md
       - VFD Encoder: guide/vfd.md
       - Calendar Encoder: guide/mce.md
       - Visualization: guide/visualization.md

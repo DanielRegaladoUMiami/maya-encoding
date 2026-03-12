@@ -45,6 +45,7 @@ pip install maya-encoding
 ## Quick Links
 
 - [Getting Started](getting-started.md) — installation and first steps
+- [When to Use](guide/when-to-use.md) — choosing the right encoder for your data
 - [VFD Guide](guide/vfd.md) — understanding vigesimal feature decomposition
 - [MCE Guide](guide/mce.md) — temporal encoding with Maya calendars
 - [API Reference](api/vfd.md) — full API documentation

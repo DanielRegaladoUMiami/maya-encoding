@@ -129,13 +129,18 @@ print(jdn_to_haab(jdn))        # (13, 3) → month 13, day 3
 print(jdn_to_long_count(jdn))  # (13, 0, 0, 0, 0) → 13.0.0.0.0
 ```
 
-## Why Maya Encoding?
+## When to Use Maya Encoding
 
-**The problem:** A number like "347" tells a model nothing about its structure. It must learn from scratch that 347 has certain divisibility properties, is "close" to 350, etc.
+| Encoder | Strong Fit | Acceptable Fit |
+|---------|-----------|----------------|
+| **VFDEncoder** | Discrete/count data (retail, events, scores), linear models | Continuous features with `passthrough=True` for tree models |
+| **MayaCalendarEncoder** | Tropical/biological time series (agriculture, epidemiology, climate) | General time series with unexplained seasonal variance |
 
-**The VFD solution:** The vigesimal system decomposes numbers into a natural hierarchy — digits (×20), bars (×5), dots (×1). This is a *strict information superset*: the model can ignore the extra features via regularization if they're not useful, but gets multi-scale structure for free if they are.
+**VFD** decomposes numbers into a natural hierarchy — digits (×20), bars (×5), dots (×1). This is a *strict information superset*: the model gets multi-scale structure for free. Linear models see +3–4% R²; tree-based models benefit with `passthrough=True`.
 
-**The MCE solution:** Standard temporal encodings use Gregorian-aligned cycles (day-of-week, month, etc.). The Maya calendar provides *orthogonal* cycles with coprime periods (13, 20, 260, 365) that capture patterns Gregorian features miss.
+**MCE** provides *orthogonal* cycles with coprime periods (13, 20, 260, 365) that capture patterns Gregorian features miss. The 260-day Tzolk'in correlates with human gestation, maize growing cycles, and tropical astronomical events.
+
+→ **[Full guide: When to Use Maya Encoding](https://danielregaladoumiami.github.io/maya-encoding/guide/when-to-use/)**
 
 ## API Reference
 

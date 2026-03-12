@@ -99,3 +99,5 @@ MCE is most useful when:
 - You want cycle features that don't depend on Gregorian calendar structure
 - You're looking for features with coprime relationships (13 and 20)
 - You want to enrich standard temporal features with orthogonal cycle information
+
+For a comprehensive guide on choosing the right encoder, including decision flowcharts and fit categories, see [When to Use Maya Encoding](when-to-use.md).
