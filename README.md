@@ -5,8 +5,11 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Downloads](https://img.shields.io/pypi/dm/maya-encoding)](https://pypi.org/project/maya-encoding/)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://danielregaladoumiami.github.io/maya-encoding/)
 
 **Maya-inspired numerical encodings for machine learning.**
+
+> **[Documentation](https://danielregaladoumiami.github.io/maya-encoding/)** · **[PyPI](https://pypi.org/project/maya-encoding/)** · **[Examples](examples/)**
 
 Two scikit-learn compatible transformers that use the mathematical structure of the ancient Maya number system and calendar to create richer feature representations.
 
