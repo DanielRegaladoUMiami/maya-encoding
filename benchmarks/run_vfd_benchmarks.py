@@ -64,13 +64,16 @@ def get_encoders():
     encoders = {
         "decimal_norm": Pipeline([("scale", MinMaxScaler())]),
         "binary": Pipeline([
-            ("scale_int", FunctionTransformer(
-                lambda X: np.round(MinMaxScaler().fit_transform(X) * 1000).astype(float)
+            ("scale", MinMaxScaler()),
+            ("to_int", FunctionTransformer(
+                lambda X: np.round(X * 1000).astype(float)
             )),
             ("binary", FunctionTransformer(binary_encode)),
         ]),
         "vfd_lite": VFDEncoder(components="lite"),
         "vfd_full": VFDEncoder(components="full"),
+        "vfd_lite_pt": VFDEncoder(components="lite", passthrough=True),
+        "vfd_full_pt": VFDEncoder(components="full", passthrough=True),
     }
     return encoders
 
