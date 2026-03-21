@@ -42,6 +42,37 @@ features = mce.fit_transform(dates)
 pip install maya-encoding
 ```
 
+## Results at a Glance
+
+### VFD — California Housing Regression (R², 5-fold CV)
+
+| Encoding | Linear Regression | Ridge | Random Forest | Gradient Boosting |
+|----------|:-:|:-:|:-:|:-:|
+| Raw + Scaled | 0.5530 | 0.5530 | 0.6561 | 0.6852 |
+| VFD-lite | 0.5832 | 0.5812 | 0.5445 | 0.5742 |
+| VFD-full | 0.5742 | 0.5723 | 0.5891 | 0.6184 |
+| **VFD-lite + passthrough** | **0.5985** | **0.5968** | 0.6588 | 0.6899 |
+| **VFD-full + passthrough** | 0.5908 | 0.5881 | **0.6615** | **0.6937** |
+
+### MCE — Temporal Cycle Detection (R², synthetic data)
+
+| Configuration | Train R² | Test R² |
+|--------------|:-:|:-:|
+| All components + cyclical | 0.9875 | **0.9146** |
+| Tzolk'in only | 0.3656 | 0.0707 |
+| Haab' only | 0.6212 | 0.5891 |
+
+### Fraud Detection (F1, 5-fold stratified CV)
+
+| Pipeline | Logistic Regression | Random Forest | Gradient Boosting |
+|----------|:-:|:-:|:-:|
+| Baseline (PCA) | 0.7082 | 0.8961 | 0.8729 |
+| VFD (replace amount) | 0.6876 | 0.8971 | 0.8816 |
+| **VFD + passthrough** | 0.6903 | **0.8993** | **0.8816** |
+
+!!! tip "Rule of thumb"
+    **Linear models** → use VFD directly. **Tree-based models** → always use `passthrough=True`.
+
 ## Quick Links
 
 - [Getting Started](getting-started.md) — installation and first steps
